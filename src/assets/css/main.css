@@ -1,0 +1,489 @@
+/* Reset cơ bản */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Arial", sans-serif;
+}
+
+body {
+  background-color: #f9f9f9;
+  color: #333;
+}
+
+/* Slider */
+.slick-slider {
+  margin: 20px auto;
+  width: 80%;
+}
+
+.slider-item {
+  width: 100%;
+  height: 400px; /* Đặt chiều cao cố định */
+  overflow: hidden; /* Đảm bảo không bị vỡ layout */
+}
+
+.slider-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Cắt ảnh để phù hợp mà không bị méo */
+  border-radius: 10px;
+
+}
+/* Ẩn thanh cuộn trên trình duyệt */
+.slick-track {
+  display: flex;
+  align-items: center; /* Căn giữa các ảnh */
+}
+/* Ẩn thanh cuộn trên trình duyệt */
+.slick-slider {
+  overflow: hidden;
+}
+
+.slick-slider::-webkit-scrollbar {
+  display: none; /* Ẩn thanh cuộn trên Chrome, Safari */
+}
+.slick-slider {
+  -ms-overflow-style: none; /* Ẩn thanh cuộn trên IE, Edge */
+  scrollbar-width: none; /* Ẩn thanh cuộn trên Firefox */
+}
+
+
+/* Tùy chỉnh khoảng cách giữa các ảnh */
+.slick-slide {
+  padding: 0 10px; /* Tạo khoảng cách giữa các ảnh */
+}
+/* Chỉnh style cho các chấm */
+.slick-dots {
+  bottom: -10px; /* Dịch xuống dưới */
+}
+.slick-dots li button:before {
+  font-size: 12px; /* Điều chỉnh kích thước chấm */
+  color: #fff; /* Màu chấm */
+}
+
+.slick-dots li.slick-active button:before {
+  color: #ff4500; /* Màu chấm active */
+}
+
+/* Section tiêu đề */
+h2 {
+  text-align: center;
+  font-size: 2rem;
+  margin: 40px 0;
+  color: #222;
+}
+
+/* Điểm đến hấp dẫn */
+.destination-container {
+  width: 90%;
+  margin: auto;
+}
+
+.destination-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.destination-card {
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  background: #fff;
+  padding: 15px;
+  margin-bottom: 5%;
+}
+.destination-card:hover {
+  transform: scale(1.03);
+}
+
+.destination-card img {
+  width: 100%;
+  height: 200px; /* Đặt chiều cao cố định */
+  object-fit: cover; /* Giữ tỷ lệ và cắt phần thừa */
+  border-radius: 10px;
+}
+
+.card-content {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.card-content h3 {
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.card-content p {
+  font-size: 1rem;
+  color: #555;
+}
+/* Button group */
+.button-group {
+  display: flex;
+  gap: 10px; /* Khoảng cách giữa các nút */
+  margin-bottom: 10px; /* Khoảng cách với phần dưới */
+}
+/* Nút like và bookmark */
+.btn-like,
+.btn-bookmark {
+  background-color: transparent;
+  border: 1px solid #ccc;
+  padding: 8px 15px;
+  font-size: 18px;
+  cursor: pointer;
+  border-radius: 5px;
+  width: 30%;
+  border: 1px solid #ff4d4d; /* Viền cho nút */
+
+}
+
+
+.btn-like:hover,
+.btn-bookmark:hover {
+  background-color: #e49393;
+}
+/* Đảm bảo các nút like và bookmark nằm ngang trong destination-card */
+.destination-card .btn-like,
+.destination-card .btn-bookmark {
+  display: inline-block; /* Nút nằm ngang */
+  margin-right: 10px; /* Khoảng cách giữa các nút */
+  padding: 5px 15px; /* Tùy chỉnh padding */
+  font-size: 16px;
+  cursor: pointer;
+  color: #ff4d4d; /* Màu đỏ cho nút like */
+  background-color: transparent; /* Không có nền */
+  border: 1px solid #ff4d4d; /* Viền cho nút */
+  border-radius: 5px; /* Bo góc nút */
+  width: 20%;
+}
+
+/* Xóa hiệu ứng hover */
+.destination-card .btn-like:hover {
+  color: inherit;
+  background-color: #e49393;
+  border: 1px solid inherit;
+}
+
+/* Chỉnh sửa thêm nếu cần thiết */
+.destination-card .btn-bookmark {
+  color: #bf0606;
+  border: 1px solid #ff4d4d; /* Viền cho nút */
+}
+
+.destination-card .btn-bookmark:hover {
+  background-color: #e49393;
+}
+.post-card .btn-bookmark{
+  width: 25%;
+  color: #bf0606;
+  border: 1px solid #ff4d4d; /* Viền cho nút */
+}.post-card .btn-like{
+  width: 25%;
+  color: #bf0606;
+  border: 1px solid #ff4d4d; /* Viền cho nút */
+}
+/* Đảm bảo input và button nằm trong cùng một container */
+.comment-input-container {
+  position: relative; /* Để có thể sử dụng position absolute cho nút */
+  width: 100%;
+}
+
+/* Đảm bảo input chiếm toàn bộ không gian */
+.comment-input-container input {
+  width: 100%;
+  padding: 10px 30px 10px 10px; /* Tạo không gian cho nút ở bên phải */
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+/* Nút bình luận nhỏ nằm trong input */
+.comment-input-container .btn-comment {
+  position: absolute;
+  left: 90%;
+  top: 36%;
+  transform: translateY(-50%); /* Căn giữa theo chiều dọc */
+  background-color: #cfd1d47c;
+  color: rgb(234, 227, 227);
+  border: none;
+  padding: 4px 8px; /* Nút nhỏ */
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 18px; /* Điều chỉnh kích thước font để nút nhỏ */
+  width: 10%;
+  height: 70%;
+}
+
+/* Nút bình luận khi hover */
+.comment-input-container .btn-comment:hover {
+  background-color: #b9bbbc;
+}
+.add-image-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px; /* Kích thước nhỏ hơn */
+  height: 50px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.2); /* Làm mờ nền */
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.add-image {
+  width: 24px;  /* Giảm kích thước icon */
+  height: 24px;
+  opacity: 0.5; /* Làm mờ icon */
+  transition: 0.3s;
+}
+
+/* Hiệu ứng hover */
+.add-image-container:hover {
+  background-color: rgba(255, 255, 255, 0.4);
+}
+
+.add-image-container:hover .add-image {
+  opacity: 0.8;
+}
+
+
+/* Cẩm nang du lịch */
+.blog-container {
+  width: 90%;
+  margin: auto;
+}
+
+.blog-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  margin-bottom: 10%;
+
+}
+
+.blog-card {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-align: center;
+  background: #fff;
+}
+
+.blog-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+.blog-card img {
+  width: 100%;
+  height: 200px; /* Đặt chiều cao cố định */
+  object-fit: cover; /* Cắt ảnh để vừa với kích thước */
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.blog-content {
+  padding: 15px;
+}
+
+.blog-date {
+  font-size: 14px;
+  color: #888;
+  margin-bottom: 10px;
+}
+.blog-content p {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.5;
+}
+.blog-content button {
+  background: #ba3131;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  width: 40%;
+  transition: background 0.3s;
+}
+
+.blog-content button:hover {
+  background: #bf4c4c;
+}
+
+/* Dịch vụ */
+.services-container {
+  width: 90%;
+  margin: auto;
+  text-align: center;
+
+}
+
+.services-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.service-card {
+  flex: 1 1 calc(33.333% - 20px);
+  text-align: center;
+  padding: 20px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 2px 6px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 5%;
+  margin-top: 2%;
+}
+
+.service-card i {
+  font-size: 2rem;
+  color: #1877f2;
+  font-size: 40px;
+  color: #007bff;
+  margin-bottom: 10px;
+}
+
+.service-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+.service-card h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.service-card p {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.5;
+}
+.post-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Tự động chia cột, tối thiểu 300px */
+  gap: 20px; /* Khoảng cách giữa các bài viết */
+  padding: 20px;
+}
+
+
+/* Lưới bài viết 2 cột */
+.posts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+/* Card bài viết */
+.post-card {
+  background: white;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: left;
+  margin-bottom: 5%;
+}
+.post-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Nội dung bài viết */
+.post-card p {
+  margin: 10px 0;
+  color: #333;
+}
+
+/* Hình ảnh trong bài viết */
+.post-images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.post-image {
+  width: 100%;
+  border-radius: 8px;
+  object-fit: cover;
+  height: 100px;
+
+}
+
+/* Nếu có nhiều ảnh, giới hạn chiều cao */
+.post-images img {
+  max-height: 200px;
+}
+
+/* Cảm xúc, địa điểm */
+.post-card p:nth-child(3),
+.post-card p:nth-child(4) {
+  font-weight: bold;
+  color: #555;
+}
+
+.delete-button {
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 5px 6px;  /* Giảm padding ngang */
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: 0.3s;
+  display: inline-block;
+  width: 40px;  /* Hoặc đặt width cụ thể nếu cần, ví dụ: width: 50px; */
+  min-width: 30px; /* Đảm bảo không quá nhỏ */
+  text-align: center;
+}
+
+.delete-button:hover {
+  background-color: #d43f3f;
+}
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 300px;
+  text-align: center;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.confirm-btn {
+  background: red;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.cancel-btn {
+  background: gray;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 5px;
+}
