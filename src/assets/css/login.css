@@ -115,6 +115,7 @@
   font-size: 18px;
   cursor: pointer;
   transition: 0.3s;
+  margin-bottom: 15%;
 }
 
 .facebook-btn:hover {
@@ -130,6 +131,7 @@
   border: none;
   padding: 8px 12px;
   border-radius: 4px;
+  margin-bottom: 15%;
   font-size: 14px;
   cursor: pointer;
   transition: 0.3s;
@@ -186,6 +188,14 @@
     border-color: #174244; /* Đổi màu viền khi focus */
     outline: none;
     box-shadow: 0 0 5px rgba(23, 66, 68, 0.5);
+  }
+  textarea {
+    padding: 12px 15px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    font-size: 16px;
+    transition: border 0.2s ease-in-out;
   }
   .container {
     background-color: #fff;
@@ -402,4 +412,6 @@
     transform: scale(0.95);
     opacity: 0.8;
   }
-  
+span{
+  margin-bottom: 5%;
+}

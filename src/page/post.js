@@ -99,7 +99,7 @@ const CreatePost = () => {
   return (
     <div>
       <Navbar />  
-      <div className="post-container">
+      <div className="post-containerr">
         <div className="post-header">
           <img src={user.avatar} alt="Avatar" className="user-avatar" />
           <span className="user-name">{user.name}</span>

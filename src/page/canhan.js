@@ -2,7 +2,9 @@ import { useState } from "react";
 import { FaFacebook, FaInstagram } from "react-icons/fa"; // Import icons
 import HaLong from "../assets/img/halong.jpg";
 import Navbar from "../compment/navbar"; 
+import { FaCamera } from "react-icons/fa"; // Import icon camera
 import "../assets/css/cn.css";
+
 
 export default function Profile() {
   const [isEditing, setIsEditing] = useState(false);
@@ -33,7 +35,17 @@ export default function Profile() {
       },
     ],
   });
-
+  const handleAvatarChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfile({ ...profile, avatar: reader.result });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+  
   const handleChange = (e) => {
     setProfile({ ...profile, [e.target.name]: e.target.value });
   };
@@ -46,8 +58,25 @@ export default function Profile() {
 
       {/* Header chứa avatar (trái) & thông tin (phải) */}
       <div className="profile-header">
-        <div className="profile-avatar">
-          <img src={profile.avatar} alt="Avatar" />
+      <div className="profile-avatar">
+        <div className="avatar-wrapper">
+          <img src={profile.avatar} alt="Avatar" className="avatar-img" />
+
+          {isEditing && (
+            <label htmlFor="avatar-upload" className="change-avatar-btn">
+              <FaCamera size={24} color="white" />
+            </label>
+          )}
+
+          <input
+            id="avatar-upload"
+            type="file"
+            accept="image/*"
+            onChange={handleAvatarChange}
+            style={{ display: "none" }}
+          />
+        </div>
+
           {isEditing ? (
             <>
               <input
@@ -80,6 +109,7 @@ export default function Profile() {
             </div>
           )}
         </div>
+
 
         {/* Thông tin cá nhân bên phải */}
         <div className="profile-content">

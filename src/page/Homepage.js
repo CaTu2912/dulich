@@ -1,11 +1,11 @@
-import React, { useState,useEffect  } from "react";
+import React, { useState, useEffect  } from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "../assets/css/main.css";
 import { FcLike, FcLikePlaceholder } from "react-icons/fc";
 import {BsBookmarkPlusFill  , BsBookmarkHeartFill } from "react-icons/bs";
-import Modal from "react-modal";
+import axios from "axios";
 import Navbar from "../compment/navbar"; 
 import HaLong from "../assets/img/halong.jpg";
 import PhuQuoc from "../assets/img/phuquoc.jpg";
@@ -43,68 +43,102 @@ const services = [
     { icon: "bi bi-star", title: "Khách sạn cao cấp", description: "Hệ thống khách sạn chất lượng." },
 ];
 
+
+
 const App = () => {
     const [likes, setLikes] = useState({});
 const [bookmarks, setBookmarks] = useState({});
 const [comments, setComments] = useState({});
 const [commentsList, setCommentsList] = useState({});
 const [posts, setPosts] = useState([]);
-const [isModalOpen, setIsModalOpen] = useState(false);
-const [postToDelete, setPostToDelete] = useState(null);
+const [currentPage, setCurrentPage] = useState(1);
+const postsPerPage = 4;
+const totalPages = Math.ceil(posts.length / postsPerPage);
+const [activeMenuIndex, setActiveMenuIndex] = useState(null);
+const [mainImages, setMainImages] = useState(posts.map(post => post.images[0])); // Lưu ảnh chính cho từng bài viết
 
-// Mở modal khi nhấn xóa
-const openModal = (index) => {
-    setPostToDelete(index);
-    setIsModalOpen(true);
+  const handleImageClick = (postIndex, image) => {
+    const updatedMainImages = [...mainImages];
+    updatedMainImages[postIndex] = image;
+    setMainImages(updatedMainImages); // Cập nhật ảnh chính cho bài viết
+  };
+
+const goToNextPage = () => {
+  if (currentPage < totalPages) setCurrentPage(currentPage + 1);
 };
 
-// Đóng modal
-const closeModal = () => {
-    setIsModalOpen(false);
-    setPostToDelete(null);
+const goToPrevPage = () => {
+  if (currentPage > 1) setCurrentPage(currentPage - 1);
 };
 
+  // Fetch data từ các API bằng axios
+  useEffect(() => {
+    // Fetch Comments
+    const fetchComments = async () => {
+      try {
+        const response = await axios.get("https://ktpm03.onrender.com/api/comments");
+        setComments(response.data);  // Dữ liệu trả về sẽ có trong `response.data`
+      } catch (error) {
+        console.error("Error fetching comments:", error);
+      }
+    };
+
+    // Fetch Likes
+    const fetchLikes = async () => {
+      try {
+        const response = await axios.get("https://ktpm03.onrender.com/api/likes");
+        setLikes(response.data);  // Lưu vào state
+      } catch (error) {
+        console.error("Error fetching likes:", error);
+      }
+    };
+
+    // Fetch Bookmarks
+    const fetchBookmarks = async () => {
+      try {
+        const response = await axios.get("https://ktpm03.onrender.com/api/bookmarks");
+        setBookmarks(response.data);  // Lưu vào state
+      } catch (error) {
+        console.error("Error fetching bookmarks:", error);
+      }
+    };
+
+    // Gọi tất cả các API
+    fetchComments();
+    fetchLikes();
+    fetchBookmarks();
+  }, []);
 
 useEffect(() => {
     // Lấy bài viết từ localStorage khi trang chủ tải lại
     const savedPosts = JSON.parse(localStorage.getItem("posts")) || [];
     setPosts(savedPosts);
 }, []);
-const handleDelete = () => {
-    if (postToDelete !== null) {  // Đảm bảo rằng postToDelete đã được gán giá trị hợp lệ
-        const updatedPosts = posts.filter((_, index) => index !== postToDelete);
-        setPosts(updatedPosts);
-        localStorage.setItem("posts", JSON.stringify(updatedPosts));
-
-        // Xóa trạng thái của bài viết đã bị xóa
-        setLikes(prev => {
-            const newLikes = { ...prev };
-            delete newLikes[postToDelete];
-            return newLikes;
-        });
-
-        setBookmarks(prev => {
-            const newBookmarks = { ...prev };
-            delete newBookmarks[postToDelete];
-            return newBookmarks;
-        });
-
-        setCommentsList(prev => {
-            const newCommentsList = { ...prev };
-            delete newCommentsList[postToDelete];
-            return newCommentsList;
-        });
-    }
-    closeModal();
-};
-
-
-Modal.setAppElement("#root"); // Định nghĩa vùng ảnh hưởng của modal
-
 // Xử lý Like
-const handleLike = (index) => {
-    setLikes((prev) => ({ ...prev, [index]: !prev[index] }));
+const handleLike = async (index) => {
+  try {
+    const isCurrentlyLiked = likes[index]?.liked || false;
+    const currentCount = likes[index]?.count || 0;
+
+    // Tính trạng thái mới
+    const newLiked = !isCurrentlyLiked;
+    const newCount = newLiked ? currentCount + 1 : currentCount - 1;
+
+    // Cập nhật frontend ngay lập tức
+    setLikes({
+      ...likes,
+      [index]: { liked: newLiked, count: newCount }
+    });
+
+    // Gửi yêu cầu cập nhật lên backend
+    await axios.put(`https://ktpm03.onrender.com/api/likes/${index}`, {
+      liked: newLiked
+    });
+  } catch (error) {
+    console.error("Error updating like:", error);
+  }
 };
+
 
 // Xử lý Bookmark
 const handleBookmark = (index) => {
@@ -125,15 +159,31 @@ const handleCommentChange = (e, index) => {
 
 // Xử lý gửi bình luận
 const handleCommentSubmit = (index) => {
-    if (!comments[index]) return;
+  if (!comments[index]) return;
 
-    setCommentsList((prev) => ({
-        ...prev,
-        [index]: [...(prev[index] || []), comments[index]],
-    }));
+  // Lấy thông tin người dùng từ localStorage
+  const currentUser = JSON.parse(localStorage.getItem("currentUser")) || {
+    username: "Ẩn danh",
+    avatar: "/default-avatar.png"
+  };
 
-    setComments((prev) => ({ ...prev, [index]: "" })); // Xóa input sau khi gửi
+  const newComment = {
+    avatar: currentUser.avatar,
+    username: currentUser.username,
+    text: comments[index]
+  };
+
+  // Kiểm tra nếu commentsList[index] chưa có, khởi tạo là mảng rỗng
+  const updatedCommentsList = [...(commentsList[index] || []), newComment];
+
+  // Cập nhật commentsList
+  const newCommentsList = [...commentsList];
+  newCommentsList[index] = updatedCommentsList;
+
+  setCommentsList(newCommentsList);
+  setComments((prev) => ({ ...prev, [index]: "" }));
 };
+
 
     const images = [CmImg, CbImg, CnImg, DbImg, HgImg, HpImg];
 
@@ -147,7 +197,11 @@ const handleCommentSubmit = (index) => {
         autoplaySpeed: 3000,
       };
       
-
+      const handleCopyContent = (content) => {
+        navigator.clipboard.writeText(content);
+        alert("Đã sao chép nội dung bài viết!");
+      };
+  
     return (
         <div>
             <Navbar />
@@ -161,130 +215,233 @@ const handleCommentSubmit = (index) => {
                 </Slider>
 
                 <section className="destination-container">
-         <h2>Điểm Đến Hấp Dẫn</h2>
-         <div className="destination-grid">
-  {destinations.map((place, index) => (
-    <div className="destination-card" key={index}>
-      <img src={place.img} alt={place.title} />
-      <div className="card-content">
-        <h3>{place.title}</h3>
-        <p>Giá: ${place.price} / người</p>
-        <p>⭐ {place.rating}</p>
+                <h2>Điểm Đến Hấp Dẫn</h2>
+<div className="destination-grid">
+  {destinations
+    .map((place, index) => ({ ...place, index, likeCount: likes[index] || 0 })) // gắn thêm index và số like
+    .sort((a, b) => {
+      if (b.likeCount !== a.likeCount) {
+        return b.likeCount - a.likeCount; // nhiều like hơn lên trước
+      }
+      return a.index - b.index; // nếu like bằng nhau thì index nhỏ hơn lên trước
+    })
+        .slice(0, 3) // lấy 3 bài đầu tiên
+    .map((place) => (
+      <div className="destination-card" key={place.index}>
+        <img src={place.img} alt={place.title} />
+        <div className="card-content">
+          <p>⭐ {place.rating}</p>
 
-        {/* Button group */}
-        <div className="button-group">
-        <button className="btn-like" onClick={() => handleLike(index)}>
-          {likes[index] ? <FcLike /> : <FcLikePlaceholder />}
-        </button>
+          {/* Button group */}
+          <div className="button-group">
+          <button className="btn-like" onClick={() => handleLike(place.index)}>
+            {likes[place.index]?.liked ? <FcLike /> : <FcLikePlaceholder />}
+            <span className="like-count">{likes[place.index]?.count || 0}</span>
+          </button>
 
 
-          <button className="btn-bookmark" onClick={() => handleBookmark(index)}>
-          {bookmarks[index] ? <BsBookmarkPlusFill /> : <BsBookmarkHeartFill />          }
-        </button>
-        </div>
 
-        {/* Bình luận */}
-        <div className="comments-section">
-          <div className="comment-input-container">
-            <input
-              type="text"
-              placeholder="Nhập bình luận..."
-              value={comments[index] || ""}
-              onChange={(e) => handleCommentChange(e, index)}
-            />
-            <button className="btn-comment" onClick={() => handleCommentSubmit(index)}>
-              💬
+            <button className="btn-bookmark" onClick={() => handleBookmark(place.index)}>
+              {bookmarks[place.index] ? <BsBookmarkPlusFill /> : <BsBookmarkHeartFill />}
             </button>
           </div>
-        </div>
 
-        {/* Hiển thị danh sách bình luận */}
-        <ul>
-          {commentsList[index]?.map((comment, idx) => (
-            <li key={idx}>{comment}</li>
-          ))}
-        </ul>
+          {/* Bình luận */}
+          <div className="comments-section">
+            <div className="comment-input-container">
+              <input
+                type="text"
+                placeholder="Nhập bình luận..."
+                value={comments[place.index] || ""}
+                onChange={(e) => handleCommentChange(e, place.index)}
+              />
+              <button className="btn-comment" onClick={() => handleCommentSubmit(place.index)}>
+                💬
+              </button>
+            </div>
+          </div>
+
+          {/* Hiển thị danh sách bình luận */}
+          <ul>
+            {commentsList[place.index]?.map((comment, idx) => (
+              <li key={idx}>{comment}</li>
+            ))}
+          </ul>
+        </div>
       </div>
-    </div>
-  ))}
+    ))}
 </div>
 
 
         </section>
-        <div>
-            <h2>📰 Bài Viết Mới</h2>
-            <div className="post-container">
-  {posts.length === 0 ? (
-    <p>Chưa có bài viết nào.</p>
-  ) : (
-    posts.map((post, index) => (
-      <div key={index} className="post-card">
-        <p>{post.content}</p>
+<h2>📰 Bài Viết Mới</h2>
+<div className="post-container">
+      {(() => {
+        const indexOfLastPost = currentPage * postsPerPage;
+        const indexOfFirstPost = indexOfLastPost - postsPerPage;
+        const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
 
-        {post.images.length > 0 && (
-          <div className="post-images">
-            {post.images.map((img, i) => (
-              <img key={i} src={img} alt="Bài viết" className="post-image" />
-            ))}
-          </div>
-        )}
+        if (currentPosts.length === 0) {
+          return (
+            <p>
+              Chưa có bài viết nào.{" "}
+              <a href="/post" style={{ color: "blue", textDecoration: "underline" }}>
+                Viết bài ngay
+              </a>
+            </p>
+          );
+        }
 
-        {post.location && <p>📍 {post.location}</p>}
-        {post.mood && <p>😊 {post.mood}</p>}
-        <p>{post.date}</p>
+        return (
+          <>
+            {currentPosts.map((post, index) => {
+              const actualIndex = indexOfFirstPost + index;
 
-        {/* Button Group */}
-        <div className="button-group">
-        <button className="btn-like" onClick={() => handleLike(index)}>
-          {likes[index] ? <FcLike /> : <FcLikePlaceholder />}
-        </button>
+              return (
+                <div key={actualIndex} className="post-card">
+                  {/* Header chứa avatar, tên người đăng và vị trí */}
+                  <div className="post-header">
+                    <div className="user-info">
+                      <img
+                        src={post.avatar || "/default-avatar.png"}
+                        alt="Avatar"
+                        className="avatar"
+                      />
+                      <div>
+                        <p className="username">{post.username || "Ẩn danh"}</p>
+                        {post.location && (
+                          <a
+                            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(post.location)}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="location-link"
+                          >
+                            📍 {post.location}
+                          </a>
+                        )}
+                      </div>
+                    </div>
 
-        <button className="btn-bookmark" onClick={() => handleBookmark(index)}>
-          {bookmarks[index] ? <BsBookmarkPlusFill /> : <BsBookmarkHeartFill />          }
-        </button>
-        </div>
+                    {/* Nút ba chấm góc phải */}
+                    <div className="post-options">
+                      <button
+                        className="options-button"
+                        onClick={() => setActiveMenuIndex(activeMenuIndex === actualIndex ? null : actualIndex)}
+                      >
+                        ⋮
+                      </button>
+                      {activeMenuIndex === actualIndex && (
+                        <div className="options-menu">
+                          <button
+                            onClick={() => {
+                              const updatedPosts = [...posts];
+                              updatedPosts.splice(actualIndex, 1);
+                              setPosts(updatedPosts);
+                              localStorage.setItem("posts", JSON.stringify(updatedPosts));
+                            }}
+                          >
+                            🗑 Xóa
+                          </button>
+                          <button onClick={() => handleCopyContent(post.content)}>
+                            📋 Sao chép
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
 
-        {/* Bình luận */}
-        <div className="comments-section">
-          <div className="comment-input-container">
-            <input
-              type="text"
-              placeholder="Nhập bình luận..."
-              value={comments[index] || ""}
-              onChange={(e) => handleCommentChange(e, index)}
-            />
-            <button className="btn-comment" onClick={() => handleCommentSubmit(index)}>
-              💬
-            </button>
-          </div>
-        </div>
+                  {/* Nội dung bài viết */}
+                  <p>{post.content}</p>
 
-        {/* Hiển thị danh sách bình luận */}
-        <ul>
-          {commentsList[index]?.map((comment, idx) => (
-            <li key={idx}>{comment}</li>
-          ))}
-        </ul>
+                  {/* Ảnh bài viết */}
+                  {post.images.length > 0 && (
+                    <div className="post-images">
+                      {/* Ảnh chính */}
+                      <img
+                        src={mainImages[actualIndex]}
+                        alt="Bài viết chính"
+                        className="post-image-main"
+                      />
 
-        {/* Nút xóa bài viết */}
-        <button onClick={() => openModal(index)} className="delete-button">
-          🗑 Xóa
-        </button>
-      </div>
-    ))
-  )}
-</div>
+                      {/* Các ảnh nhỏ dưới ảnh chính */}
+                      <div className="post-image-thumbnails">
+                        {post.images.slice(1).map((img, i) => (
+                          <img
+                            key={i}
+                            src={img}
+                            alt={`Bài viết phụ ${i + 1}`}
+                            className="post-image-thumbnail"
+                            onClick={() => handleImageClick(actualIndex, img)} // Cập nhật ảnh chính khi click
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
+                  {post.mood && <p>😊 {post.mood}</p>}
+                  <p>{post.date}</p>
 
-            {/* Modal xác nhận xóa */}
-            <Modal isOpen={isModalOpen} onRequestClose={closeModal} className="modal" overlayClassName="overlay">
-                <h3>Bạn có chắc chắn muốn xóa bài viết này?</h3>
-                <div className="modal-actions">
-                    <button onClick={handleDelete} className="confirm-btn">Xóa</button>
-                    <button onClick={closeModal} className="cancel-btn">Hủy</button>
+                  <div className="button-group">
+                    <button className="btn-like" onClick={() => handleLike(actualIndex)}>
+                      {likes[actualIndex]?.liked ? <FcLike /> : <FcLikePlaceholder />}
+                      <span className="like-count">{likes[actualIndex]?.count || 0}</span>
+                    </button>
+
+                    <button className="btn-bookmark" onClick={() => handleBookmark(actualIndex)}>
+                      {bookmarks[actualIndex] ? <BsBookmarkPlusFill /> : <BsBookmarkHeartFill />}
+                    </button>
+                  </div>
+
+                  <div className="comments-section">
+                    <div className="comment-input-container">
+                      <input
+                        type="text"
+                        placeholder="Nhập bình luận..."
+                        value={commentsList[actualIndex] || ""}
+                        onChange={(e) => handleCommentChange(e, actualIndex)}
+                      />
+                      <button className="btn-comment" onClick={() => handleCommentSubmit(actualIndex)}>
+                        💬
+                      </button>
+                    </div>
+                  </div>
+
+                  <ul className="comment-list">
+                    {commentsList[actualIndex]?.map((comment, idx) => (
+                      <li key={idx} className="comment-item">
+                        <img
+                          src={comment.avatar || "/default-avatar.png"}
+                          alt="Avatar"
+                          className="comment-avatar"
+                        />
+                        <div className="comment-content">
+                          <span className="comment-username">{comment.username || "Ẩn danh"}</span>
+                          <span className="comment-text">{comment.text}</span>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-            </Modal>
-        </div>
+              );
+            })}
+          </>
+        );
+      })()}
+    </div>
+
+    {/* Phân trang */}
+    <div className="pagination-arrows">
+      <button onClick={goToPrevPage} disabled={currentPage === 1}>
+        ←
+      </button>
+      <span>
+        Trang {currentPage} / {totalPages}
+      </span>
+      <button onClick={goToNextPage} disabled={currentPage === totalPages}>
+        →
+      </button>
+    </div>
+
             <section className="blog-container">
     <h2>Cẩm Nang Du Lịch</h2>
     <div className="blog-grid">
