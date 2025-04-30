@@ -1,0 +1,234 @@
+/* vhl.css */
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  background-color: #efedeb;
+  color: #333;
+}
+
+.vhl-page {
+  width: 100%;
+}
+
+/* Navbar */
+.vhl-navbar {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  transition: background 0.3s ease;
+}
+
+.vhl-navbar-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 30px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.vhl-logo {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #0077b6;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.vhl-menu {
+  display: flex;
+  gap: 24px;
+}
+
+.vhl-menu-item {
+  position: relative;
+  text-decoration: none;
+  color: #444;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  padding: 8px 0;
+}
+
+.vhl-menu-item::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  width: 0%;
+  background-color: #0077b6;
+  transition: width 0.3s ease;
+}
+
+.vhl-menu-item:hover::after,
+.vhl-menu-item.active::after {
+  width: 100%;
+}
+
+.vhl-menu-item:hover,
+.vhl-menu-item.active {
+  color: #0077b6;
+}
+
+/* Banner */
+.vhl-banner {
+  background: url('https://cdn.vntrip.vn/cam-nang/wp-content/uploads/2017/03/vinh-ha-long-1.jpg') center/cover no-repeat;
+  color: rgb(206, 198, 198);
+  text-align: center;
+  padding: 20px 10px;
+}
+
+.vhl-banner h1 {
+  color: rgb(255, 254, 254);
+  font-size: 3rem;
+  margin-bottom: 10px;
+  text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5);
+}
+
+.vhl-banner p {
+  font-size: 1.2rem;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+/* Section */
+.vhl-section {
+  padding: 30px 10px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.vhl-section h2 {
+  font-size: 2rem;
+  margin-bottom: 15px;
+  font-weight: bold;
+  color: #056f66;
+}
+
+/* Card + Grid */
+.vhl-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+}
+
+.vhl-card {
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+}
+
+.vhl-card:hover {
+  transform: translateY(-5px);
+}
+
+.vhl-slider {
+  width: 100%;
+  height: 200px;
+}
+
+.vhl-slider-img {
+  border-radius: 10px;
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.vhl-card-content {
+  padding: 15px;
+}
+
+.vhl-card-title {
+  font-size: 1.2rem;
+  color: #0077b6;
+  margin-bottom: 10px;
+}
+
+.vhl-card-description {
+  font-size: 1rem;
+  color: #555;
+}
+
+/* Experience */
+.vhl-experience h3 {
+  color: #023e8a;
+  margin-top: 20px;
+}
+
+.vhl-experience ul {
+  list-style-type: disc;
+  margin-left: 20px;
+  color: #333;
+}
+
+/* Map */
+.vhl-map-container iframe {
+  width: 100%;
+  border-radius: 10px;
+}
+
+/* Reviews */
+.vhl-review-section {
+  background-color: #e0f7fa;
+}
+
+.vhl-reviews {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.vhl-review {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.1);
+}
+
+.vhl-review p {
+  font-style: italic;
+  margin-bottom: 10px;
+}
+
+.vhl-review span {
+  font-weight: bold;
+  color: #0077b6;
+}
+.vhl-navbar-container {
+  display: flex;
+  align-items: center;
+  padding: 5px 10px;
+  max-width: 1200px;
+  margin: auto;
+  gap: 5px; /* để tránh dính nhau */
+}
+
+.vhl-back-button {
+  display: flex;
+  align-items: center;
+  background: none;
+  border: none;
+  color: #0077b6;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 8px;
+  transition: color 0.3s;
+}
+
+.vhl-back-button:hover {
+  color: #023e8a;
+}
+.vhl-left-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+

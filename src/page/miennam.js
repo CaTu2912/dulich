@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import Navbar from "../compment/navbar"; 
+import Footer from "../compment/footer"; 
+
 import "../assets/css/mienbac.css";
 
 const destinations = [
@@ -144,6 +146,7 @@ const destinations = [
           </button>
         </div>
       </div>
+      <Footer />
       </div>
     );
   }

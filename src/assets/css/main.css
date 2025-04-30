@@ -9,6 +9,9 @@
 body {
   background-color: #f9f9f9;
   color: #333;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Slider */
@@ -869,4 +872,150 @@ ul {
 
 .comment-text {
   font-size: 14px;
+}
+
+/* Footer Styling */
+.modern-footer {
+    background-color: #2c3e50; /* Dark blue background */
+    color: #ecf0f1; /* Light text color */
+    padding: 50px 0 20px;
+    margin-top: 40px;
+    width: 100%;
+    position: relative;
+    bottom: 0;
+}
+
+.footer-container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 30px;
+}
+
+.footer-section h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    position: relative;
+    padding-bottom: 10px;
+    color: #ecf0f1; /* Ensure consistent heading color */
+}
+
+.footer-section h3::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 50px;
+    height: 2px;
+    background-color: #e74c3c; /* Red accent color */
+}
+
+.footer-section p {
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+.contact-info {
+    list-style: none;
+    padding: 0;
+}
+
+.contact-info li {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.contact-info li svg {
+    margin-right: 10px;
+    color: #e74c3c; /* Red accent color */
+}
+
+.social-icons {
+    display: flex;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.social-icons a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    color: #ecf0f1; /* Ensure icon color is consistent */
+}
+
+.social-icons a:hover {
+    background-color: #e74c3c;
+    transform: translateY(-3px);
+}
+
+.newsletter {
+    margin-top: 20px;
+}
+
+.newsletter input {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+.newsletter button {
+    background-color: #e74c3c;
+    color: #fff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.newsletter button:hover {
+    background-color: #c0392b;
+}
+
+.footer-bottom {
+    margin-top: 30px;
+    text-align: center;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    color: #ecf0f1; /* Ensure consistent text color */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .footer-container {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .footer-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Ensure the main content grows to push footer down */
+#root, .App, body > div {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Main container should take up available space */
+body > div > div {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }

@@ -7,6 +7,7 @@ import { FcLike, FcLikePlaceholder } from "react-icons/fc";
 import {BsBookmarkPlusFill  , BsBookmarkHeartFill } from "react-icons/bs";
 import axios from "axios";
 import Navbar from "../compment/navbar"; 
+import Footer from "../compment/footer"; 
 import HaLong from "../assets/img/halong.jpg";
 import PhuQuoc from "../assets/img/phuquoc.jpg";
 import DaNang from "../assets/img/danang.jpg";
@@ -21,11 +22,12 @@ const destinations = [
     { img: HaLong, title: "Vịnh Hạ Long", price: 150, rating: 4.8 },
     { img: PhuQuoc, title: "Phú Quốc", price: 200, rating: 4.7 },
     { img: DaNang, title: "Đà Nẵng", price: 180, rating: 4.6 },
+    { img: CmImg, title: "Cà Mau", price: 160, rating: 4.5 },
 ];
 const blogs = [
     {
         imgSrc: HaLong,
-        title: "Kinh nghiệm du lịch Vịnh Hạ Long",
+        title: "Kinh nghiệm du lịch Đà Nẵng",
         date: "15 Feb 2025",
         description: "Hướng dẫn chi tiết về chuyến đi khám phá kỳ quan thiên nhiên thế giới.",
     },
@@ -55,7 +57,45 @@ const [currentPage, setCurrentPage] = useState(1);
 const postsPerPage = 4;
 const totalPages = Math.ceil(posts.length / postsPerPage);
 const [activeMenuIndex, setActiveMenuIndex] = useState(null);
-const [mainImages, setMainImages] = useState(posts.map(post => post.images[0])); // Lưu ảnh chính cho từng bài viết
+const [mainImages, setMainImages] = useState([]);
+const token = localStorage.getItem("token");
+
+useEffect(() => {
+  const fetchPosts = async () => {
+    try {
+      const response = await axios.get('https://ktpm03.onrender.com/api/getAllDestinations', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const transformed = response.data.destinations.map((item) => ({
+        username: "Ẩn danh",
+        avatar: "/default-avatar.png",
+        location: `${item.latitude}, ${item.longitude}`,
+        latitude: item.latitude,
+        longitude: item.longitude,
+        title: item.name,
+        content: item.description,
+        images: item.image_path ? [item.image_path] : [],
+        mood: null,
+        date: new Date(item.created_at).toLocaleDateString(),
+      }));
+      
+      setPosts(transformed);
+    } catch (err) {
+      console.error("Lỗi khi gọi API:", err);
+    }
+  };
+
+  fetchPosts();
+}, [token]); 
+
+useEffect(() => {
+  if (posts.length > 0) {
+    setMainImages(posts.map(post => post.images?.[0] || "")); // fallback nếu images không có
+  }
+}, [posts]);
 
   const handleImageClick = (postIndex, image) => {
     const updatedMainImages = [...mainImages];
@@ -70,6 +110,7 @@ const goToNextPage = () => {
 const goToPrevPage = () => {
   if (currentPage > 1) setCurrentPage(currentPage - 1);
 };
+
 
   // Fetch data từ các API bằng axios
   useEffect(() => {
@@ -108,12 +149,6 @@ const goToPrevPage = () => {
     fetchLikes();
     fetchBookmarks();
   }, []);
-
-useEffect(() => {
-    // Lấy bài viết từ localStorage khi trang chủ tải lại
-    const savedPosts = JSON.parse(localStorage.getItem("posts")) || [];
-    setPosts(savedPosts);
-}, []);
 // Xử lý Like
 const handleLike = async (index) => {
   try {
@@ -138,7 +173,6 @@ const handleLike = async (index) => {
     console.error("Error updating like:", error);
   }
 };
-
 
 // Xử lý Bookmark
 const handleBookmark = (index) => {
@@ -225,7 +259,7 @@ const handleCommentSubmit = (index) => {
       }
       return a.index - b.index; // nếu like bằng nhau thì index nhỏ hơn lên trước
     })
-        .slice(0, 3) // lấy 3 bài đầu tiên
+    .slice(0, 4) // lấy 4 bài đầu tiên thay vì 3
     .map((place) => (
       <div className="destination-card" key={place.index}>
         <img src={place.img} alt={place.title} />
@@ -274,28 +308,29 @@ const handleCommentSubmit = (index) => {
 
 
         </section>
-<h2>📰 Bài Viết Mới</h2>
-<div className="post-container">
-      {(() => {
-        const indexOfLastPost = currentPage * postsPerPage;
-        const indexOfFirstPost = indexOfLastPost - postsPerPage;
-        const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
+        <h2>📰 Bài Viết Mới</h2>
 
-        if (currentPosts.length === 0) {
-          return (
-            <p>
-              Chưa có bài viết nào.{" "}
-              <a href="/post" style={{ color: "blue", textDecoration: "underline" }}>
-                Viết bài ngay
-              </a>
-            </p>
-          );
-        }
+<div className="post-containerr">
+  {(() => {
+    const indexOfLastPost = currentPage * postsPerPage;
+    const indexOfFirstPost = indexOfLastPost - postsPerPage;
+    const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
 
-        return (
-          <>
-            {currentPosts.map((post, index) => {
-              const actualIndex = indexOfFirstPost + index;
+    if (currentPosts.length === 0) {
+      return (
+        <p>
+          Chưa có bài viết nào.{" "}
+          <a href="/post" style={{ color: "blue", textDecoration: "underline" }}>
+            Viết bài ngay
+          </a>
+        </p>
+      );
+    }
+
+    return (
+      <>
+        {currentPosts.map((post, index) => {
+          const actualIndex = indexOfFirstPost + index;
 
               return (
                 <div key={actualIndex} className="post-card">
@@ -471,8 +506,10 @@ const handleCommentSubmit = (index) => {
         ))}
     </div>
 </section>
-        </div>
-    );
-};
+<Footer />
+              
+            </div>
+        );
+    };
 
-export default App;
+    export default App;
